@@ -5,6 +5,10 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XunitTestLogger", "XunitTestLogger\XunitTestLogger.csproj", "{A90E099D-2850-454A-906C-106BD42614E9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XunitTestLoggerTests", "XunitTestLoggerTests\XunitTestLoggerTests.csproj", "{38D88108-72CD-4C4D-BCC9-72155EA26128}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Playground", "Playground\Playground.csproj", "{5ADD28E8-E448-47B9-B134-6DC6834F6B60}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +22,13 @@ Global
 		{A90E099D-2850-454A-906C-106BD42614E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A90E099D-2850-454A-906C-106BD42614E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A90E099D-2850-454A-906C-106BD42614E9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{38D88108-72CD-4C4D-BCC9-72155EA26128}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{38D88108-72CD-4C4D-BCC9-72155EA26128}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{38D88108-72CD-4C4D-BCC9-72155EA26128}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{38D88108-72CD-4C4D-BCC9-72155EA26128}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5ADD28E8-E448-47B9-B134-6DC6834F6B60}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5ADD28E8-E448-47B9-B134-6DC6834F6B60}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5ADD28E8-E448-47B9-B134-6DC6834F6B60}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5ADD28E8-E448-47B9-B134-6DC6834F6B60}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
