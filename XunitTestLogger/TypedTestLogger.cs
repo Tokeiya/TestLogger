@@ -3,22 +3,26 @@ using Xunit.Abstractions;
 
 namespace XunitTestLogger;
 
-public class TestLogger<T>:ILogger<T>
+public class TestLogger<T> : ILogger<T>
 {
+	private readonly ILogger<T>? _dispatchTo;
 	private readonly TestLogger _logger;
-	
+
 	public TestLogger(ITestOutputHelper helper, LogLevel mininumLogLevel = LogLevel.Information,
 		ConsoleColor defaultForegroundColor = ConsoleColor.Gray,
 		ConsoleColor defaultBackgroundColor = ConsoleColor.Black,
-		ILogger? dispatchTo = null)
+		ILogger<T>? dispatchTo = null)
 	{
-		_logger=new TestLogger(helper,mininumLogLevel,defaultForegroundColor,defaultBackgroundColor,dispatchTo);
+		_logger = new(helper, mininumLogLevel, defaultForegroundColor, defaultBackgroundColor);
+		_dispatchTo = dispatchTo;
 	}
-	
-	
-	public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
+
+
+	public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception,
+		Func<TState, Exception?, string> formatter)
 	{
-		_logger.Log(logLevel,eventId,state,exception,formatter);
+		_dispatchTo?.Log(logLevel, eventId, state, exception, formatter);
+		_logger.Log(logLevel, eventId, state, exception, formatter);
 	}
 
 	public bool IsEnabled(LogLevel logLevel)
