@@ -7,29 +7,6 @@ namespace XunitTestLoggerTests;
 using Xunit;
 using FakeItEasy;
 
-class Foo : ITestOutputHelper
-{
-	private readonly ITestOutputHelper _underlying;
-	
-	public string Recent { get;private set; }
-	
-	public Foo(ITestOutputHelper underlying)
-	{
-		_underlying=underlying;
-	}
-	
-	public void WriteLine(string message)
-	{
-		Recent = message;
-		_underlying.WriteLine(message);
-	}
-
-	public void WriteLine(string format, params object[] args)
-	{
-		Recent = string.Format(format, args);
-		_underlying.WriteLine(format, args);
-	}
-}
 
 public class TestLoggerTests
 {
@@ -55,7 +32,14 @@ public class TestLoggerTests
 	[Fact]
 	public void LogDebugTest()
 	{
-		var logger=new TestLogger(_testOutputHelper,LogLevel.Debug);
-		logger.LogDebug("Hello");
+		// var helper=A.Fake<ITestOutputHelper>();
+		// var logger=new TestLogger(helper,LogLevel.Debug);
+		// logger.LogDebug("Hello");
+		//
+		// A.CallTo(()=>helper.WriteLine("\e[96;49mDebug\e[39;49m\n\0\nDEBUG\n\n")).MustHaveHappenedOnceExactly();
+		var helper=A.Fake<ITestOutputHelper>();
+		helper.WriteLine("Hello");
+		A.CallTo(()=>helper.WriteLine("Hello")).MustHaveHappenedOnceExactly();
+		//
 	}
 }
