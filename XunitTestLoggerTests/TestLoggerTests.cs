@@ -7,12 +7,35 @@ namespace XunitTestLoggerTests;
 using Xunit;
 using FakeItEasy;
 
+class Foo : ITestOutputHelper
+{
+	private readonly ITestOutputHelper _underlying;
+	
+	public string Recent { get;private set; }
+	
+	public Foo(ITestOutputHelper underlying)
+	{
+		_underlying=underlying;
+	}
+	
+	public void WriteLine(string message)
+	{
+		Recent = message;
+		_underlying.WriteLine(message);
+	}
 
-public class UnitTest1
+	public void WriteLine(string format, params object[] args)
+	{
+		Recent = string.Format(format, args);
+		_underlying.WriteLine(format, args);
+	}
+}
+
+public class TestLoggerTests
 {
 	private readonly ITestOutputHelper _testOutputHelper;
 
-	public UnitTest1(ITestOutputHelper testOutputHelper)
+	public TestLoggerTests(ITestOutputHelper testOutputHelper)
 	{
 		_testOutputHelper = testOutputHelper;
 	}
