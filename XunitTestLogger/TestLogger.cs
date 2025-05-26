@@ -4,24 +4,14 @@ using Xunit.Abstractions;
 
 namespace XunitTestLogger;
 
-public sealed class TestLogger:ILogger
+public sealed class TestLogger : ILogger
 {
+	private const int DefaultForegroundColor = 39;
+	private const int DefaultBackgroundColor = 49;
+	
 	private static readonly IReadOnlyDictionary<LogLevel, (int foreground, int background)> ColorSet;
-	
-	static TestLogger()
-	{
-		ColorSet = new Dictionary<LogLevel, (int foreground, int background)>
-		{
-			[LogLevel.Debug] = (ForegroundColors[ConsoleColor.Cyan], BackgroundColors[ConsoleColor.Black]),
-			[LogLevel.Trace] = (ForegroundColors[ConsoleColor.Blue], BackgroundColors[ConsoleColor.Black]),
-			[LogLevel.Information] = (ForegroundColors[ConsoleColor.Green], BackgroundColors[ConsoleColor.Black]),
-			[LogLevel.Warning] = (ForegroundColors[ConsoleColor.White], BackgroundColors[ConsoleColor.DarkYellow]),
-			[LogLevel.Error] = (ForegroundColors[ConsoleColor.White], BackgroundColors[ConsoleColor.DarkMagenta]),
-			[LogLevel.Critical] = (ForegroundColors[ConsoleColor.White], BackgroundColors[ConsoleColor.DarkRed]),
-		};
-	}
-	
-	
+
+
 	private static readonly IReadOnlyDictionary<ConsoleColor, int> ForegroundColors = new Dictionary<ConsoleColor, int>
 	{
 		[ConsoleColor.Black] = 30,
@@ -39,7 +29,7 @@ public sealed class TestLogger:ILogger
 		[ConsoleColor.Blue] = 94,
 		[ConsoleColor.Magenta] = 95,
 		[ConsoleColor.Cyan] = 96,
-		[ConsoleColor.White] = 97,
+		[ConsoleColor.White] = 97
 	};
 
 
@@ -60,67 +50,62 @@ public sealed class TestLogger:ILogger
 		[ConsoleColor.Blue] = 104,
 		[ConsoleColor.Magenta] = 105,
 		[ConsoleColor.Cyan] = 106,
-		[ConsoleColor.White] = 107,
+		[ConsoleColor.White] = 107
 	};
 
-	private static void SetColor(StringBuilder builder,ConsoleColor foreground, ConsoleColor background)
-	{
-		builder.Append($"\x1b{ForegroundColors[foreground]};{BackgroundColors[background]}m");
-	}
+	private readonly ILogger? _dispatchTo;
 
-	private static void SetColor(StringBuilder builder,(int foreground, int background) tuple)
-	{
-		builder.Append($"\x1b{tuple.foreground};{tuple.background}m");
-	}
+	private readonly ITestOutputHelper _helper;
 
-	private void ResetColor(StringBuilder builder)
-	{
-		builder.Append($"\x1b[{ForegroundColors[DefaultForegroundColor]};{BackgroundColors[DefaultBackgroundColor]}m");
-	}
-	
 	private readonly Lock _lock = new();
-	public TestLogger(ITestOutputHelper helper, LogLevel mininumLogLevel=LogLevel.Information,
-		ConsoleColor defaultForegroundColor = ConsoleColor.Gray,
-		ConsoleColor defaultBackgroundColor = ConsoleColor.Black,
+
+	static TestLogger()
+	{
+		ColorSet = new Dictionary<LogLevel, (int foreground, int background)>
+		{
+			[LogLevel.Debug] = (ForegroundColors[ConsoleColor.Cyan], DefaultBackgroundColor),
+			[LogLevel.Trace] = (ForegroundColors[ConsoleColor.Blue], DefaultBackgroundColor),
+			[LogLevel.Information] = (ForegroundColors[ConsoleColor.Green], DefaultBackgroundColor),
+			[LogLevel.Warning] = (ForegroundColors[ConsoleColor.White], BackgroundColors[ConsoleColor.DarkYellow]),
+			[LogLevel.Error] = (ForegroundColors[ConsoleColor.White], BackgroundColors[ConsoleColor.DarkMagenta]),
+			[LogLevel.Critical] = (ForegroundColors[ConsoleColor.White], BackgroundColors[ConsoleColor.DarkRed])
+		};
+	}
+
+	public TestLogger(ITestOutputHelper helper, LogLevel mininumLogLevel = LogLevel.Information,
 		ILogger? dispatchTo = null)
 	{
 		_helper = helper;
 		MinimumLogLevel = mininumLogLevel;
-		DefaultForegroundColor = defaultForegroundColor;
-		DefaultBackgroundColor = defaultBackgroundColor;
-		_dispatchTo=dispatchTo;
+		_dispatchTo = dispatchTo;
 	}
-	
-	public ConsoleColor DefaultForegroundColor { get; }
-	public ConsoleColor DefaultBackgroundColor { get; }
+
 	public LogLevel MinimumLogLevel { get; }
-	
-	private readonly ITestOutputHelper _helper;
-	private readonly ILogger? _dispatchTo;
-	
-	
-	public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
+
+
+	public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception,
+		Func<TState, Exception?, string> formatter)
 	{
-		_dispatchTo?.Log(logLevel,eventId,state,exception,formatter);
-		
+		_dispatchTo?.Log(logLevel, eventId, state, exception, formatter);
+
 		lock (_lock)
 		{
-			var bld=new StringBuilder();
-			
-			SetColor(bld,ColorSet[logLevel]);
+			var bld = new StringBuilder();
+
+			SetColor(bld, ColorSet[logLevel]);
 			bld.Append(logLevel);
 			ResetColor(bld);
 			bld.Append('\n');
-			
+
 			bld.Append(eventId);
 			bld.Append('\n');
-			
+
 			bld.Append(formatter(state, exception));
 			bld.Append('\n');
 
 			if (exception is not null)
 			{
-				SetColor(bld,ConsoleColor.White,ConsoleColor.Red);
+				SetColor(bld, ConsoleColor.White, ConsoleColor.Red);
 				bld.Append(exception.GetType().Name);
 				ResetColor(bld);
 				bld.Append('\n');
@@ -128,8 +113,9 @@ public sealed class TestLogger:ILogger
 				bld.Append('\n');
 				bld.Append(exception.StackTrace);
 			}
+
 			bld.Append('\n');
-			
+
 			_helper.WriteLine(bld.ToString());
 		}
 	}
@@ -142,5 +128,20 @@ public sealed class TestLogger:ILogger
 	public IDisposable? BeginScope<TState>(TState state) where TState : notnull
 	{
 		return null;
+	}
+
+	private static void SetColor(StringBuilder builder, ConsoleColor foreground, ConsoleColor background)
+	{
+		builder.Append($"\x1b{ForegroundColors[foreground]};{BackgroundColors[background]}m");
+	}
+
+	private static void SetColor(StringBuilder builder, (int foreground, int background) tuple)
+	{
+		builder.Append($"\x1b[{tuple.foreground};{tuple.background}m");
+	}
+
+	private void ResetColor(StringBuilder builder)
+	{
+		builder.Append($"\x1b[{DefaultForegroundColor};{DefaultBackgroundColor}m");
 	}
 }

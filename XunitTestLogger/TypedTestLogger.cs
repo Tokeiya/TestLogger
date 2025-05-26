@@ -9,11 +9,9 @@ public class TestLogger<T> : ILogger<T>
 	private readonly TestLogger _logger;
 
 	public TestLogger(ITestOutputHelper helper, LogLevel mininumLogLevel = LogLevel.Information,
-		ConsoleColor defaultForegroundColor = ConsoleColor.Gray,
-		ConsoleColor defaultBackgroundColor = ConsoleColor.Black,
 		ILogger<T>? dispatchTo = null)
 	{
-		_logger = new(helper, mininumLogLevel, defaultForegroundColor, defaultBackgroundColor);
+		_logger = new(helper, mininumLogLevel);
 		_dispatchTo = dispatchTo;
 	}
 
