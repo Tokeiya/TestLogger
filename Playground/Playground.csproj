@@ -12,7 +12,13 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\XunitTestLogger\XunitTestLogger.csproj" />
+        <ProjectReference Include="..\XunitTestLoggerTests\XunitTestLoggerTests.csproj"/>
+        <ProjectReference Include="..\XunitTestLogger\XunitTestLogger.csproj"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Microsoft.Extensions.Logging" Version="9.0.5"/>
+        <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.5"/>
     </ItemGroup>
 
 </Project>

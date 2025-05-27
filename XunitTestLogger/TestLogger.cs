@@ -8,7 +8,7 @@ public sealed class TestLogger : ILogger
 {
 	private const int DefaultForegroundColor = 39;
 	private const int DefaultBackgroundColor = 49;
-	
+
 	private static readonly IReadOnlyDictionary<LogLevel, (int foreground, int background)> ColorSet;
 
 
@@ -88,36 +88,38 @@ public sealed class TestLogger : ILogger
 	{
 		_dispatchTo?.Log(logLevel, eventId, state, exception, formatter);
 
-		lock (_lock)
-		{
-			var bld = new StringBuilder();
 
-			SetColor(bld, ColorSet[logLevel]);
-			bld.Append(logLevel);
-			ResetColor(bld);
-			bld.Append('\n');
-
-			bld.Append(eventId);
-			bld.Append('\n');
-
-			bld.Append(formatter(state, exception));
-			bld.Append('\n');
-
-			if (exception is not null)
+		if (IsEnabled(logLevel))
+			lock (_lock)
 			{
-				SetColor(bld, ConsoleColor.White, ConsoleColor.Red);
-				bld.Append(exception.GetType().Name);
+				var bld = new StringBuilder();
+
+				SetColor(bld, ColorSet[logLevel]);
+				bld.Append(logLevel);
 				ResetColor(bld);
 				bld.Append('\n');
-				bld.Append(exception.Message);
+
+				bld.Append(eventId);
 				bld.Append('\n');
-				bld.Append(exception.StackTrace);
+
+				bld.Append(formatter(state, exception));
+				bld.Append('\n');
+
+				if (exception is not null)
+				{
+					SetColor(bld, ConsoleColor.White, ConsoleColor.Red);
+					bld.Append(exception.GetType().Name);
+					ResetColor(bld);
+					bld.Append('\n');
+					bld.Append(exception.Message);
+					bld.Append('\n');
+					bld.Append(exception.StackTrace);
+				}
+
+				bld.Append('\n');
+
+				_helper.WriteLine(bld.ToString());
 			}
-
-			bld.Append('\n');
-
-			_helper.WriteLine(bld.ToString());
-		}
 	}
 
 	public bool IsEnabled(LogLevel logLevel)
@@ -132,7 +134,7 @@ public sealed class TestLogger : ILogger
 
 	private static void SetColor(StringBuilder builder, ConsoleColor foreground, ConsoleColor background)
 	{
-		builder.Append($"\x1b{ForegroundColors[foreground]};{BackgroundColors[background]}m");
+		builder.Append($"\x1b[{ForegroundColors[foreground]};{BackgroundColors[background]}m");
 	}
 
 	private static void SetColor(StringBuilder builder, (int foreground, int background) tuple)
