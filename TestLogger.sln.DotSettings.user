@@ -30,6 +30,11 @@
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=8028941a_002De937_002D41ab_002Db837_002Db5196402fdb9/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="LogDebugTest" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;TestAncestor&gt;&#xD;
     &lt;TestId&gt;xUnit::38D88108-72CD-4C4D-BCC9-72155EA26128::net9.0::XunitTestLoggerTests.TestLoggerTests&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::38D88108-72CD-4C4D-BCC9-72155EA26128::net9.0::XunitTestLoggerTests.TypedTestLoggerTests.CtorTest&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::38D88108-72CD-4C4D-BCC9-72155EA26128::net9.0::XunitTestLoggerTests.TypedTestLoggerTests.PassLogTraceTest&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::38D88108-72CD-4C4D-BCC9-72155EA26128::net9.0::XunitTestLoggerTests.TypedTestLoggerTests.LogDebugTest&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::38D88108-72CD-4C4D-BCC9-72155EA26128::net9.0::XunitTestLoggerTests.TypedTestLoggerTests.LogInformationTest&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::38D88108-72CD-4C4D-BCC9-72155EA26128::net9.0::XunitTestLoggerTests.TypedTestLoggerTests&lt;/TestId&gt;&#xD;
   &lt;/TestAncestor&gt;&#xD;
 &lt;/SessionState&gt;</s:String>
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=bac43fd1_002D13e7_002D4111_002D93d7_002D6a0a26eb23bf/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="LogDebugTest #2" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;

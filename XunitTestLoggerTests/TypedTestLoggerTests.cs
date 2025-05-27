@@ -2,18 +2,21 @@
 using Moq;
 using Xunit.Abstractions;
 using XunitTestLogger;
-using Times = Moq.Times;
 
 namespace XunitTestLoggerTests;
 
-public class TestLoggerTests
+file interface ISample
+{
+}
+
+public class TypedTestLoggerTests
 {
 	[Fact]
 	public void CtorTest()
 	{
 		var dummy = new Mock<ITestOutputHelper>();
 
-		TestLogger fixtire = new(dummy.Object);
+		TestLogger<ISample> fixtire = new(dummy.Object);
 		fixtire.MinimumLogLevel.Is(LogLevel.Information);
 
 		fixtire = new(dummy.Object, LogLevel.Debug);
@@ -35,7 +38,7 @@ public class TestLoggerTests
 	public void PassLogTraceTest()
 	{
 		var helper = new Mock<ITestOutputHelper>();
-		var logger = new TestLogger(helper.Object);
+		var logger = new TestLogger<ISample>(helper.Object);
 		logger.LogTrace("trace message");
 		helper.Verify(m => m.WriteLine(It.IsAny<string>()), Times.Never);
 	}
@@ -46,7 +49,7 @@ public class TestLoggerTests
 	{
 
 		var helper = new Mock<ITestOutputHelper>();
-		var logger = new TestLogger(helper.Object, LogLevel.Trace);
+		var logger = new TestLogger<ISample>(helper.Object, LogLevel.Trace);
 
 		logger.LogDebug("\"hello world\"");
 		helper.Verify(h => h.WriteLine("\e[96;49mDebug\e[39;49m\n0\n\"hello world\"\n\n"), Times.Once);
@@ -58,8 +61,8 @@ public class TestLoggerTests
 	{
 		var helper = new Mock<ITestOutputHelper>();
 
-		var dispatchTo = new Mock<ILogger>();
-		var logger = new TestLogger(helper.Object, LogLevel.Information, dispatchTo.Object);
+		var dispatchTo = new Mock<ILogger<String>>();
+		var logger = new TestLogger<String>(helper.Object, LogLevel.Information, dispatchTo.Object);
 
 		logger.LogDebug("\"hello world\"");
 
@@ -76,8 +79,8 @@ public class TestLoggerTests
 	{
 		var helper = new Mock<ITestOutputHelper>();
 
-		var dispatchTo = new Mock<ILogger>();
-		var logger = new TestLogger(helper.Object, LogLevel.Information, dispatchTo.Object);
+		var dispatchTo = new Mock<ILogger<String>>();
+		var logger = new TestLogger<String>(helper.Object, LogLevel.Information, dispatchTo.Object);
 
 		logger.LogInformation("information");
 
@@ -95,8 +98,8 @@ public class TestLoggerTests
 	public void PassLogInformationTest()
 	{
 		var helper = new Mock<ITestOutputHelper>();
-		var dispatchTo = new Mock<ILogger>();
-		var logger = new TestLogger(helper.Object, LogLevel.Warning, dispatchTo.Object);
+		var dispatchTo = new Mock<ILogger<String>>();
+		var logger = new TestLogger<String>(helper.Object, LogLevel.Warning, dispatchTo.Object);
 
 		logger.LogInformation("information");
 		helper.Verify(m => m.WriteLine(It.IsAny<string>()), Times.Never);
@@ -110,9 +113,9 @@ public class TestLoggerTests
 	public void LogWarningTest()
 	{
 		var helper = new Mock<ITestOutputHelper>();
-		var dispatchTo = new Mock<ILogger>();
+		var dispatchTo = new Mock<ILogger<String>>();
 
-		var logger = new TestLogger(helper.Object, LogLevel.Warning, dispatchTo.Object);
+		var logger = new TestLogger<String>(helper.Object, LogLevel.Warning, dispatchTo.Object);
 		logger.LogWarning("Warning");
 		helper.Verify(h => h.WriteLine("\e[97;43mWarning\e[39;49m\n0\nWarning\n\n"), Times.Once);
 
@@ -127,9 +130,9 @@ public class TestLoggerTests
 	public void PassWarningTetst()
 	{
 		var helper = new Mock<ITestOutputHelper>();
-		var dispatchTo = new Mock<ILogger>();
+		var dispatchTo = new Mock<ILogger<String>>();
 
-		var logger = new TestLogger(helper.Object, LogLevel.Error, dispatchTo.Object);
+		var logger = new TestLogger<String>(helper.Object, LogLevel.Error, dispatchTo.Object);
 		logger.LogWarning("Warning");
 		helper.Verify(m => m.WriteLine(It.IsAny<string>()), Times.Never);
 
@@ -145,9 +148,9 @@ public class TestLoggerTests
 	public void LogErrorTest()
 	{
 		var helper = new Mock<ITestOutputHelper>();
-		var dispatchTo = new Mock<ILogger>();
+		var dispatchTo = new Mock<ILogger<String>>();
 		
-		var logger = new TestLogger(helper.Object, LogLevel.Error,dispatchTo.Object);
+		var logger = new TestLogger(helper.Object, LogLevel.Error, dispatchTo.Object);
 		logger.LogError("Error");
 		helper.Verify(h => h.WriteLine("\e[97;45mError\e[39;49m\n0\nError\n\n"), Times.Once);
 		
@@ -155,15 +158,16 @@ public class TestLoggerTests
 			LogLevel.Error, It.IsAny<EventId>(), It.IsAny<It.IsAnyType>(), null,
 			It.IsAny<Func<It.IsAnyType, Exception?, string>>()
 		), Times.Once);
+		
 	}
 
 	[Fact]
 	public void PassErrorTest()
 	{
 		var helper = new Mock<ITestOutputHelper>();
-		var dispatchTo = new Mock<ILogger>();
+		var dispatchTo = new Mock<ILogger<String>>();
 
-		var logger = new TestLogger(helper.Object, LogLevel.Critical, dispatchTo.Object);
+		var logger = new TestLogger<String>(helper.Object, LogLevel.Critical, dispatchTo.Object);
 		logger.LogError("Error");
 		helper.Verify(m => m.WriteLine(It.IsAny<string>()), Times.Never);
 
@@ -177,8 +181,8 @@ public class TestLoggerTests
 	public void LogCriticalTest()
 	{
 		var helper = new Mock<ITestOutputHelper>();
-		var dispatchTo = new Mock<ILogger>();
-		var logger = new TestLogger(helper.Object, LogLevel.Critical, dispatchTo.Object);
+		var dispatchTo = new Mock<ILogger<String>>();
+		var logger = new TestLogger<String>(helper.Object, LogLevel.Critical, dispatchTo.Object);
 		logger.LogCritical("Critical");
 		helper.Verify(h => h.WriteLine("\e[97;41mCritical\e[39;49m\n0\nCritical\n\n"), Times.Once);
 
@@ -193,9 +197,9 @@ public class TestLoggerTests
 	public void PassCriticalTest()
 	{
 		var helper = new Mock<ITestOutputHelper>();
-		var dispatchTo = new Mock<ILogger>();
+		var dispatchTo = new Mock<ILogger<String>>();
 
-		var logger = new TestLogger(helper.Object, LogLevel.None, dispatchTo.Object);
+		var logger = new TestLogger<String>(helper.Object, LogLevel.None, dispatchTo.Object);
 		logger.LogCritical("Critical");
 		helper.Verify(m => m.WriteLine(It.IsAny<string>()), Times.Never);
 
@@ -203,6 +207,7 @@ public class TestLoggerTests
 			LogLevel.Critical, It.IsAny<EventId>(), It.IsAny<It.IsAnyType>(), null,
 			It.IsAny<Func<It.IsAnyType, Exception?, string>>()
 		), Times.Once);
+		//
 	}
 
 	[Fact]
@@ -210,7 +215,8 @@ public class TestLoggerTests
 	{
 		//\e[97;45mError\e[39;49m\n0\nLogMessage\n\e[97;101mArgumentException\e[39;49m\nException Message\n\n
 		var helper = new Mock<ITestOutputHelper>();
-		var logger = new TestLogger(helper.Object);
+		var dispatchTo = new Mock<ILogger<String>>();
+		var logger = new TestLogger<String>(helper.Object, dispatchTo: dispatchTo.Object);
 		var ex = new ArgumentException("Exception Message");
 		logger.LogError(ex, "LogMessage");
 

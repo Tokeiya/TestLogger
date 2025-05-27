@@ -15,6 +15,10 @@ public class TestLogger<T> : ILogger<T>
 		_dispatchTo = dispatchTo;
 	}
 
+	public LogLevel MinimumLogLevel
+	{
+		get => _logger.MinimumLogLevel;
+	}
 
 	public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception,
 		Func<TState, Exception?, string> formatter)
